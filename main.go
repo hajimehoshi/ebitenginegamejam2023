@@ -100,13 +100,14 @@ const (
 type Game struct {
 	phase Phase
 
-	score        int
-	items        [3][4]*Item
-	coolTime     int
-	bugID        int
-	playerLife   int
-	recoveryTime int
-	damageTime   int
+	score            int
+	items            [3][4]*Item
+	coolTime         int
+	bugID            int
+	playerLife       int
+	recoveryTime     int
+	damageTime       int
+	gameOverCoolTime int
 }
 
 func (g *Game) Update() error {
@@ -141,6 +142,7 @@ func (g *Game) initGame() {
 	g.playerLife = initPlayerLife
 	g.recoveryTime = 0
 	g.damageTime = 0
+	g.gameOverCoolTime = 0
 }
 
 func (g *Game) updateGame() error {
@@ -256,6 +258,7 @@ func (g *Game) updateGame() error {
 				g.playerLife--
 				if g.playerLife <= 0 {
 					g.phase = PhaseGameOver
+					g.gameOverCoolTime = 60
 				}
 			}
 		}
@@ -267,8 +270,11 @@ func (g *Game) updateGameOver() error {
 	if g.damageTime > 0 {
 		g.damageTime--
 	}
+	if g.gameOverCoolTime > 0 {
+		g.gameOverCoolTime--
+	}
 
-	if justPressed() {
+	if g.gameOverCoolTime == 0 && justPressed() {
 		g.phase = PhaseTitle
 	}
 	return nil
