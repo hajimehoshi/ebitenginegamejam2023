@@ -122,7 +122,7 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) updateTitle() error {
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+	if justPressed() {
 		g.initGame()
 		g.phase = PhaseGame
 	}
@@ -266,7 +266,7 @@ func (g *Game) updateGameOver() error {
 		g.damageTime--
 	}
 
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+	if justPressed() {
 		g.phase = PhaseTitle
 	}
 	return nil
@@ -437,8 +437,14 @@ func (i *Item) Update() {
 		i.lifetime--
 	}
 
-	i.hovered = image.Pt(ebiten.CursorPosition()).In(i.Bounds())
-	if i.hovered && inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+	touchIDs := inpututil.AppendJustPressedTouchIDs(nil)
+	for _, id := range touchIDs {
+		i.hovered = image.Pt(ebiten.TouchPosition(id)).In(i.Bounds())
+	}
+	if len(touchIDs) == 0 {
+		i.hovered = image.Pt(ebiten.CursorPosition()).In(i.Bounds())
+	}
+	if i.hovered && justPressed() {
 		i.resolved = true
 	}
 }
@@ -493,4 +499,14 @@ func min(x, y float64) float64 {
 		return x
 	}
 	return y
+}
+
+func justPressed() bool {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		return true
+	}
+	if len(inpututil.AppendJustPressedTouchIDs(nil)) > 0 {
+		return true
+	}
+	return false
 }
