@@ -208,22 +208,24 @@ func (g *Game) updateGame() error {
 
 				// base score:
 				//   star 0    -> 10
-				//   star 1k   -> 20
-				//   star 10k  -> 30
-				//   star 100k -> 40
-				baseScore := 10 * (math.Log(float64(g.score))/log10 - 1)
+				//   star 1k   -> 10 * √10
+				//   star 10k  -> 100
+				//   star 100k -> 100 * √10
+				//baseScore := 10 * (math.Log(float64(g.score))/log10 - 1)
+				baseScore := math.Sqrt(float64(g.score))
 				baseScore = max(10, baseScore)
 
 				g.items[j][i] = NewItem(label, x, y, false, int(lifetime), int(baseScore))
 			}
 
 			// cool time:
-			//   star 0   -> 60-120 [ticks]
-			//   star 100 -> 45-90 [ticks]
-			//   star 1k  -> 30-60 [ticks]
-			//   star 10k -> 15-30 [ticks]
+			//   star 0    -> 60-120 [ticks]
+			//   star 100  -> 45-90 [ticks]
+			//   star 1k   -> 30-60 [ticks]
+			//   star 10k  -> 15-30 [ticks]
+			//   star 100k -> 5-10 [ticks]
 			coolTime := 15 * (5 - (math.Log(float64(g.score)) / log10))
-			coolTime = min(60, max(15, coolTime))
+			coolTime = min(60, max(5, coolTime))
 			g.coolTime = int(coolTime) + rand.Intn(int(coolTime))
 		}
 	}
