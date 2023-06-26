@@ -1,4 +1,4 @@
-Reverse the roles. You are no longer just a game developer. You are the creator of the game engine. Tackle endless bugs and issues that relentlessly attack, and strive for a world-class game engine.
+Reverse the roles. You are no longer just a game developer. You are the creator of the game engine. Tackle endless bugs and feature requests that relentlessly attack, and strive for a world-class game engine.
 
 # License
 
